@@ -3,6 +3,7 @@ import AppError from "../../errorHerplrs/appError";
 import { IAuthProvider, IUser } from "./user.interface";
 import { User } from "./user.model";
 import { envVers } from "../../config/env";
+import  httpStatus  from 'http-status-codes';
 
 
 const createUser = async(payload:Partial<IUser>)=>{
@@ -31,6 +32,27 @@ const createUser = async(payload:Partial<IUser>)=>{
     return user
 }
 
+const updateUser = async (id:string, payload:Partial<IUser>)=>{
+
+     if(payload.password){
+            payload.password = await bcrypt.hash(payload.password, Number(envVers.BCRYPT_SALT_ROUND))
+        }
+
+    const user = await User.findByIdAndUpdate(id, payload,{
+        new:true,
+        runValidators:true
+    }).select("-password")
+
+    
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+  }
+
+  return user;
+
+}
+
 export const userService = {
-    createUser
+    createUser,
+    updateUser
 }
