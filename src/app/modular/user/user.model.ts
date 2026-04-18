@@ -25,7 +25,7 @@ export const userSchema = new Schema<IUser>({
     },
     IsActive:{
         type:String,
-        enum:Object.values(Role),
+        enum:Object.values(isActive),
         default:isActive.ACTIVE
     },
     IsDeleted:{type:Boolean, default:false},
