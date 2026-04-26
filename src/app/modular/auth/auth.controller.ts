@@ -6,6 +6,8 @@ import AppError from "../../errorHerplrs/appError";
 import { createUserToken } from "../../utils/userTokens";
 import { setAuthCookie } from "../../utils/setCookie";
 import { sentResponse } from "../../utils/sentResponse";
+import { authService } from "./auth.service";
+
 
 
 const credentialsLogin = catchAsync(async(req:Request, res:Response, next:NextFunction)=>{
@@ -38,6 +40,55 @@ const credentialsLogin = catchAsync(async(req:Request, res:Response, next:NextFu
      })(req, res, next)
 })
 
+
+const getNewAccessToken = catchAsync(async (req:Request, res:Response, next:NextFunction)=>{
+  
+  const refreshToken = req.cookies.refreshToken;
+
+  if(!refreshToken){
+    throw new AppError(httpStatue.BAD_REQUEST, "Refresh token not found")
+  }
+
+  const tokenInfo = await authService.getNewAccessToken(refreshToken as string)
+
+  setAuthCookie(res, tokenInfo)
+
+   sentResponse(res,{
+    success:true,
+    statusCode:httpStatue.OK,
+    message:"Successfully generated new access token",
+    data:tokenInfo
+   
+  })
+
+})
+
+const logout = catchAsync(async(req:Request, res:Response, next:NextFunction)=>{
+  
+  res.clearCookie("accessToken",{
+     httpOnly:true,
+     secure:false,
+     sameSite:"lax"
+  })
+
+  res.clearCookie("refreshToken",{
+    httpOnly:true,
+    secure:false,
+    sameSite:"lax"
+  })
+
+    sentResponse(res,{
+    success:true,
+    statusCode:httpStatue.OK,
+    message:"successfully  logged out user",
+    data:null
+   
+  })
+
+})
+
  export const authController = {
-    credentialsLogin
+    credentialsLogin,
+    getNewAccessToken,
+    logout
  }

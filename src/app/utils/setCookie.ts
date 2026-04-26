@@ -7,7 +7,7 @@ export interface authTokens {
 
 export const setAuthCookie = (res:Response, tokenInfo:authTokens)=>{
     if(tokenInfo.accessToken){
-        res.cookie("AccessToken", tokenInfo.accessToken,{
+        res.cookie("accessToken", tokenInfo.accessToken,{
             httpOnly:true,
             secure:false
         })
