@@ -1,8 +1,12 @@
-import passport from "passport";
+import passport, { Profile } from "passport";
 import { VerifyCallback } from "passport-google-oauth2";
 import { Strategy as localStrategy } from "passport-local";
+import { Strategy as googleStrategy } from "passport-google-oauth2";
 import { User } from "../modular/user/user.model";
 import  bcrypt  from 'bcryptjs';
+import { envVers } from "./env";
+import { Role } from "../modular/user/user.interface";
+
 
 
 passport.use(
@@ -30,6 +34,49 @@ passport.use(
         }
     }
 )
+)
+
+
+passport.use(
+    new googleStrategy ({
+        clientID:envVers.GOOGLE_CLIENT_ID,
+        clientSecret:envVers.GOOGLE_CLIENT_SECRET,
+        callbackURL:envVers.GOOGLE_CALLBACK_URL
+
+    }, async(accessToken:string, refreshToken:string, profile:Profile, done:VerifyCallback)=>{
+        try {
+
+             const email = profile.emails?.[0].value
+            if(!email){
+                return done(null, false,{message:"email not found"})
+            }
+
+            let user = await User.findOne({email})
+
+            
+
+            if(!user){
+                user = await User.create({
+                    email,
+                    name:profile.displayName,
+                    picture:profile.photos?.[0].value,
+                    role:Role.USER,
+                    IsVerified:true,
+                    auths:[{
+                       provider:"google",
+                       providerID:profile.id
+                    }]
+                })
+            }
+
+            return done (null, user)
+            
+        } catch (error) {
+            console.log('google Strategy error', error);
+
+            return done ( error)
+        }
+    })
 )
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
