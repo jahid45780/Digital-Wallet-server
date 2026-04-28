@@ -8,6 +8,8 @@ import { setAuthCookie } from "../../utils/setCookie";
 import { sentResponse } from "../../utils/sentResponse";
 import { authService } from "./auth.service";
 import { JwtPayload } from "jsonwebtoken";
+import { envVers } from "../../config/env";
+
 
 
 
@@ -103,9 +105,34 @@ const resetPassword = catchAsync(async (req:Request, res:Response, next:NextFunc
 
 })
 
+
+const googleCallbackController = catchAsync(async(req:Request, res:Response, next:NextFunction)=>{
+
+   let redirectTo = req.query.state ? req.query.state as string : ""
+
+   if(redirectTo.startsWith("/")){
+    redirectTo = redirectTo.slice(1)
+   }
+
+    const user = req.user;
+    
+    if(!user){
+      throw new AppError(404, "user  not  found")
+    }
+
+    const TokenInfo = createUserToken(user)
+
+    setAuthCookie(res, TokenInfo)
+
+    res.redirect(`${envVers.FRONTEND_URL}/${redirectTo}`)
+
+})
+
+
  export const authController = {
     credentialsLogin,
     getNewAccessToken,
     logout,
-    resetPassword
+    resetPassword,
+    googleCallbackController
  } 
