@@ -1,9 +1,10 @@
 import bcrypt from "bcryptjs";
 import AppError from "../../errorHerplrs/appError";
-import { IAuthProvider, IUser } from "./user.interface";
+import { IAuthProvider, IUser, Role } from "./user.interface";
 import { User } from "./user.model";
 import { envVers } from "../../config/env";
 import  httpStatus  from 'http-status-codes';
+import { Wallet } from "../wallet/wallet.model";
 
 
 const createUser = async(payload:Partial<IUser>)=>{
@@ -27,6 +28,14 @@ const createUser = async(payload:Partial<IUser>)=>{
           ...rest
     })
 
+    if(user.role === Role.USER || user.role === Role.AGENT){
+
+        await Wallet.create({
+            user:user._id,
+            balance:50,
+            status:"active"
+        })
+    }
 
 
     return user
