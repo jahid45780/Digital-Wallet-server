@@ -17,8 +17,10 @@ async (req:Request, res:Response, next:NextFunction)=>{
         }
 
           // validate with zod
-      const validatedData = await zodSchema.parseAsync(parsedBody);
-       req.body = validatedData;
+       const validatedData = await zodSchema.parseAsync({
+        body: parsedBody,
+      }) as any;
+         req.body = validatedData.body;
        next()
 
     } catch (error) {
