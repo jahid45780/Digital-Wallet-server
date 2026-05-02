@@ -1,6 +1,5 @@
-import { model, Schema } from "mongoose";
-import { TWallet } from "./wallet.interface";
-
+import { Schema, model } from "mongoose";
+import { TWallet, TWalletStatus } from "./wallet.interface";
 
 const walletSchema = new Schema<TWallet>(
   {
@@ -10,14 +9,17 @@ const walletSchema = new Schema<TWallet>(
       required: true,
       unique: true,
     },
+
     balance: {
       type: Number,
       default: 50,
+      min: 0,
     },
+
     status: {
       type: String,
-      enum: ["active", "blocked"],
-      default: "active",
+      enum: Object.values(TWalletStatus),
+      default:TWalletStatus.ACTIVE,
     },
   },
   {
@@ -25,4 +27,7 @@ const walletSchema = new Schema<TWallet>(
   }
 );
 
-export const Wallet = model<TWallet>("Wallet", walletSchema);
+export const Wallet = model<TWallet>(
+  "Wallet",
+  walletSchema
+);

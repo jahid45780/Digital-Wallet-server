@@ -5,7 +5,6 @@ export enum Role {
     ADMIN = "ADMIN",
     AGENT = "AGENT",
     USER = "USER",
-    includes = "includes"
 }
 
 export interface IAuthProvider {

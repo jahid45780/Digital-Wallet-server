@@ -33,7 +33,7 @@ const createUser = async(payload:Partial<IUser>)=>{
         await Wallet.create({
             user:user._id,
             balance:50,
-            status:"active"
+            status:"ACTIVE"
         })
     }
 

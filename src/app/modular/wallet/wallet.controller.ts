@@ -5,7 +5,7 @@ import { sentResponse } from "../../utils/sentResponse";
 import { Wallet } from "./wallet.model";
 import AppError from "../../errorHerplrs/appError";
 
-
+ 
 const getMyWallet = catchAsync(async(req:Request, res:Response, next:NextFunction)=>{
 
 
@@ -20,66 +20,48 @@ const getMyWallet = catchAsync(async(req:Request, res:Response, next:NextFunctio
 
 })
 
-const addMoney = catchAsync(async (req:Request, res:Response, next:NextFunction)=>{
+const  getAllWallets = catchAsync(async (req:Request, res:Response, next:NextFunction)=>{
 
 
-  const userId = (req.user as any)?.userId;
-  if (!userId) {
-    throw new AppError(401, "Unauthorized");
-  }
-
-    const result = await walletService.addMoney(
-        userId,
-        req.body.amount
-    )
+  const result = await walletService.getAllWallets()
 
     sentResponse(res, {
     success: true,
     statusCode: 200,
-    message: "Money added successfully",
+    message: "All wallets fetched successfully",
+    meta:result.meta,
     data: result,
   });
 
 })
 
-const withdraw = catchAsync(async(req:Request, res:Response, next:NextFunction)=>{
-    const userId = (req.user as any)?.userId;
-  if (!userId) {
-    throw new AppError(401, "Unauthorized");
-  }
+const  blockWallet = catchAsync(async(req:Request, res:Response, next:NextFunction)=>{
+ 
+   const result = await walletService.blockWallet(
+      req.params.walletId as string
+    );
 
-  const result = await walletService.withdraw(
-    userId,
-    req.body.amount
-  )
 
   sentResponse(res,{
     success:true,
     statusCode:200,
-    message:"Withdraw successful",
+    message:" successful block Wallet ",
     data:result
   })
 })
 
 
 
-const sendMoney = catchAsync(async (req:Request, res:Response, next:NextFunction)=>{
+const unblockWallet = catchAsync(async (req:Request, res:Response, next:NextFunction)=>{
     
-      const userId = (req.user as any)?.userId;
-  if (!userId) {
-    throw new AppError(401, "Unauthorized");
-  }
-    
-    const result = await walletService.sendMoney(
-        userId,
-        req.body.receiverId,
-        req.body.amount
+    const result = await walletService.unblockWallet(
+      req.params.walletId as string
     )
 
     sentResponse(res, {
     success: true,
     statusCode: 200,
-    message: "Money sent successfully",
+    message: "successfully unblock wallet",
     data: result,
   });
 
@@ -88,8 +70,8 @@ const sendMoney = catchAsync(async (req:Request, res:Response, next:NextFunction
 
 export const walletController ={
     getMyWallet,
-    addMoney,
-    withdraw,
-    sendMoney
+    getAllWallets,
+    blockWallet,
+    unblockWallet
     
 }
