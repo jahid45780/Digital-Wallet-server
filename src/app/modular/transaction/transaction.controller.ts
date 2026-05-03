@@ -24,7 +24,26 @@ const addMoney = catchAsync(async(req:Request, res:Response, next:NextFunction)=
         data: result
     })
 })
+
+const withdraw = catchAsync(async(req:Request, res:Response, next:NextFunction)=>{
+  
+  const userId = (req.user as any).userId;
+
+ const result = await transactionService.withdraw(
+    userId,
+    req.body.amount
+ )
+
+   sentResponse(res, {
+      success: true,
+      statusCode: 200,
+      message: "Withdraw successful",
+      data: result,
+    });
+
+})
  
 export const transactionController = {
-   addMoney
+   addMoney,
+   withdraw
 }

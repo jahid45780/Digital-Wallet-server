@@ -9,5 +9,9 @@ router.post("/add-money",
  checkAuth(Role.USER),
 transactionController.addMoney)
 
+router.post("/withdraw",
+    checkAuth(Role.USER),
+    transactionController.withdraw)
+
 
 export const  transactionRouter =router; 
