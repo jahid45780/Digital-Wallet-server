@@ -13,5 +13,14 @@ router.post("/withdraw",
     checkAuth(Role.USER),
     transactionController.withdraw)
 
+router.post("/send-money",
+    checkAuth(Role.USER),
+    transactionController.sendMoney)
+
+    router.post("/cash-in", 
+        checkAuth(Role.AGENT),
+        transactionController.cashIn)
+
+
 
 export const  transactionRouter =router; 
