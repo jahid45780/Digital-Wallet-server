@@ -95,10 +95,56 @@ const cashIn = catchAsync (async(req:Request, res:Response, next:NextFunction)=>
     });
 
 })
+
+const cashOut = catchAsync(async (req:Request, res:Response, next:NextFunction)=>{
+
+  const userId = (req.user as any).userId;
+
+    if (!userId) {
+    throw new AppError(401, "Unauthorized");
+  }
+
+  const result = await transactionService.cashOut(
+      userId,
+      req.body.userId,
+      req.body.amount
+  )
+
+    sentResponse(res, {
+      success: true,
+      statusCode: 200,
+      message: "Cash out successful",
+      data: result,
+    });
+
+
+})
+
+const myTransactions = catchAsync(async (req:Request, res:Response, next:NextFunction)=>{
+  
+  const  userId  = (req.user as any).userId;
+
+     if (!userId) {
+    throw new AppError(401, "Unauthorized");
+  }
+
+  const result = await transactionService.myTransactions(userId)
+
+   sentResponse(res, {
+      success: true,
+      statusCode: 200,
+      message:
+        "Transactions fetched successfully",
+      data: result,
+    });
+
+})
  
 export const transactionController = {
    addMoney,
    withdraw,
    sendMoney,
-   cashIn
+   cashIn,
+   cashOut,
+   myTransactions
 }

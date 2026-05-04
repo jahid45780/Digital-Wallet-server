@@ -263,11 +263,116 @@ const cashIn = async (
   }
 };
 
+// cash out
+const cashOut = async (
+  agentId: string,
+  userId: string,
+  amount: number
+) => {
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    const agent = await User.findById(agentId);
+
+    if (!agent) {
+      throw new AppError(404, "Agent not found");
+    }
+
+    if (agent.role !== Role.AGENT) {
+      throw new AppError(
+        403,
+        "Only agent can cash out"
+      );
+    }
+
+    const wallet = await Wallet.findOne({
+      user: userId,
+    }).session(session);
+
+    if (!wallet) {
+      throw new AppError(404, "Wallet not found");
+    }
+
+    if (wallet.status === TWalletStatus.BLOCKED) {
+      throw new AppError(403, "Wallet blocked");
+    }
+
+    if (wallet.balance < amount) {
+      throw new AppError(
+        400,
+        "Insufficient balance"
+      );
+    }
+
+    wallet.balance -= amount;
+
+    await wallet.save({ session });
+
+    const commission = amount * 0.01;
+
+    await Transaction.create(
+      [
+        {
+          type: "CASH_OUT",
+          fromWallet: wallet._id,
+          amount,
+          fee: 0,
+          commission,
+          status: "SUCCESS",
+          initiatedBy: agentId,
+        },
+      ],
+      { session }
+    );
+
+    await session.commitTransaction();
+
+    return wallet;
+  } catch (error) {
+    await session.abortTransaction();
+
+    throw error;
+  } finally {
+    session.endSession();
+  }
+};
+
+// my transaction history
+const myTransactions = async (
+  userId: string
+) => {
+  const wallet = await Wallet.findOne({
+    user: userId,
+  });
+
+  if (!wallet) {
+    throw new AppError(404, "Wallet not found");
+  }
+
+  const transactions = await Transaction.find({
+    $or: [
+      { fromWallet: wallet._id },
+      { toWallet: wallet._id },
+    ],
+  })
+    .populate("fromWallet")
+    .populate("toWallet")
+    .sort({ createdAt: -1 });
+
+  return transactions;
+};
+
+
+
 
 
 export const transactionService = {
      addMoney,
      withdraw,
      sendMoney,
-     cashIn
+     cashIn,
+     cashOut,
+     myTransactions
 }

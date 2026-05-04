@@ -17,10 +17,16 @@ router.post("/send-money",
     checkAuth(Role.USER),
     transactionController.sendMoney)
 
-    router.post("/cash-in", 
+router.post("/cash-in", 
         checkAuth(Role.AGENT),
         transactionController.cashIn)
 
+ router.post("/cash-out", 
+    checkAuth(Role.AGENT),
+    transactionController.cashOut)
 
+router.get("/me", 
+checkAuth(Role.USER, Role.AGENT),    
+transactionController.myTransactions)
 
 export const  transactionRouter =router; 
