@@ -1,88 +1,64 @@
 import {z }from "zod";
 import { isActive, Role } from "./user.interface";
 
-
- export const createUserZodSchema = z.object({
-    
+ 
+export const createUserZodSchema = z.object({
+  body: z.object({
     name: z
-    .string({message:"Name must be string"})
-    .min(2,{message:"Name must be at least 2 characters long"})
-    .max(50,{message:"Name cannot exceed 50 characters"}),
+      .string({ message: "Name must be string" })
+      .min(2, { message: "Name must be at least 2 characters long" })
+      .max(50, { message: "Name cannot exceed 50 characters" }),
+
     email: z
-    .string({error:"Email must be string"})
-    .email({message:"Invalid email address format"})
-    .min(5,{message:"Email must be at least 5 characters long"})
-    .max(100,{message:"Email cannot exceed 100 characters"}),
+      .string({ error: "Email must be string" })
+      .email({ message: "Invalid email address format" })
+      .min(5)
+      .max(100),
+
     password: z
-    .string({ error: "Password must be string" })
-    .min(8, { message: "Password must be at least 8 characters long." })
-    .regex(/^(?=.*[A-Z])/, {
-     message: "Password must contain at least 1 uppercase letter.",
-     })
-    .regex(/^(?=.*[!@#$%^&*])/, {
-    message: "Password must contain at least 1 special character.",
-    })
-    .regex(/^(?=.*\d)/, {
-    message: "Password must contain at least 1 number.",
-    }),
+      .string({ error: "Password must be string" })
+      .min(8)
+      .regex(/^(?=.*[A-Z])/)
+      .regex(/^(?=.*[!@#$%^&*])/)
+      .regex(/^(?=.*\d)/),
+
     phone: z
-    .string({error: "Phone Number must be string" })
-    .regex(/^(?:\+8801\d{9}|01\d{9})$/, {
-    message: "Phone number must be valid for Bangladesh. Format: +8801XXXXXXXXX or 01XXXXXXXXX",
-    })
-    .optional(),
-    address: z
-    .string({error:"address must be string"})
-    .max(200,{message:"Address cannot exceed 200 characters"})
-    .optional(),
-    role: z
-    .nativeEnum(Role, {
-      message: "Role must be ADMIN, AGENT, or USER",
-    })
-    .default(Role.USER), // optional but recommended
+      .string()
+      .regex(/^(?:\+8801\d{9}|01\d{9})$/)
+      .optional(),
 
-    })
+    address: z.string().max(200).optional(),
+
+    role: z.nativeEnum(Role).default(Role.USER),
+  }),
+});
 
 
-      export const updateUserZodSchema = z.object({
-    
-    name: z
-    .string({error:"Name must be string"})
-    .min(2,{message:"Name must be at least 2 characters long"})
-    .max(50,{message:"Name cannot exceed 50 characters"}).optional(),
+
+export const updateUserZodSchema = z.object({
+  body: z.object({
+    name: z.string().min(2).max(50).optional(),
+
     password: z
-    .string({error: "Password must be string" })
-    .min(8, { message: "Password must be at least 8 characters long." })
-    .regex(/^(?=.*[A-Z])/, {
-     message: "Password must contain at least 1 uppercase letter.",
-     })
-    .regex(/^(?=.*[!@#$%^&*])/, {
-    message: "Password must contain at least 1 special character.",
-    }) 
-    .regex(/^(?=.*\d)/, {
-    message: "Password must contain at least 1 number.",
-    }).optional(),
-    phone: z
-    .string({ error: "Phone Number must be string" })
-    .regex(/^(?:\+8801\d{9}|01\d{9})$/, {
-    message: "Phone number must be valid for Bangladesh. Format: +8801XXXXXXXXX or 01XXXXXXXXX",
-    })
-    .optional(),
-    address: z
-    .string({error:"address must be string"})
-    .max(200,{message:"Address cannot exceed 200 characters"})
-    .optional(),
-    role: z
-    .enum(Object.values(Role) as [string])
-    .optional(),
-    isActive:z
-    .enum(Object.values(isActive) as [string])
-    .optional(),
-    IsDeleted: z
-    .string({error:"isDelete must be true or false"})
-    .optional(),
-     IsVerified: z
-    .string({error:"isVerified must be true or false"})
-    .optional()
+      .string()
+      .min(8)
+      .regex(/^(?=.*[A-Z])/)
+      .regex(/^(?=.*[!@#$%^&*])/)
+      .regex(/^(?=.*\d)/)
+      .optional(),
 
-    })
+    phone: z
+      .string()
+      .regex(/^(?:\+8801\d{9}|01\d{9})$/)
+      .optional(),
+
+    address: z.string().max(200).optional(),
+
+    role: z.nativeEnum(Role).optional(),
+
+    isActive: z.nativeEnum(isActive).optional(),
+
+    IsDeleted: z.boolean().optional(),
+    IsVerified: z.boolean().optional(),
+  }),
+});

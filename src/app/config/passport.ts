@@ -6,6 +6,7 @@ import { User } from "../modular/user/user.model";
 import  bcrypt  from 'bcryptjs';
 import { envVers } from "./env";
 import { Role } from "../modular/user/user.interface";
+import { Wallet } from "../modular/wallet/wallet.model";
 
 
 
@@ -67,6 +68,13 @@ passport.use(
                        providerID:profile.id
                     }]
                 })
+
+            await Wallet.create({
+            user: user._id,
+            balance: 50,
+            status: "ACTIVE", 
+          });
+
             }
 
             return done (null, user)

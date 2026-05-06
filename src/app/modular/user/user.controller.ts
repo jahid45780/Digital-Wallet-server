@@ -3,6 +3,8 @@ import httpStatus from "http-status-codes"
 import { catchAsync } from "../../utils/catchAsync";
 import { userService } from "./user.service";
 import { sentResponse } from "../../utils/sentResponse";
+import { JwtPayload } from "jsonwebtoken";
+import { get } from "node:http";
 
 
 const createUser = catchAsync(async(req:Request, res:Response, next:NextFunction)=>{
@@ -64,19 +66,21 @@ const getSingleUser = catchAsync(async(req:Request, res:Response, next:NextFunct
 
 const getMe = catchAsync(async(req:Request, res:Response, next:NextFunction)=>{
   
-  const result = await userService.getMe
+  const decodedToken = req.user as JwtPayload;
+const result = await userService.getMe(decodedToken.userId)
 
-  // sentResponse(res, {
-  //       success: true,
-  //       statusCode: httpStatus.OK,
-  //       message: "Your profile Retrieved Successfully",
-  //       data: result.data
-  //   })
+  sentResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "Your profile Retrieved Successfully",
+        data: result.data
+    })
 })
 
  export const userController = {
     createUser,
     updateUser,
     getUsers,
-    getSingleUser
+    getSingleUser,
+    getMe
  }

@@ -1,58 +1,24 @@
-import { NextFunction, Request, Response } from "express";
-import { AnyZodObject } from "zod/v3";
-
-
-export const validateRequest =
-  (zodSchema: AnyZodObject) =>
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      let parsedBody;
-
-      // 🔥 safe check
-      if (req.body?.data) {
-        parsedBody = JSON.parse(req.body.data);
-      } else {
-        parsedBody = req.body;
-      }
-
-      // validate with zod
-      const validatedData = await zodSchema.parseAsync(parsedBody);
-
-      req.body = validatedData;
-
-      next();
-    } catch (error) {
-      next(error);
-    }
-  };
-
-
 // import { NextFunction, Request, Response } from "express";
-// import { ZodTypeAny } from "zod";
+// import { ZodSchema } from "zod";
 
 // export const validateRequest =
-//   (zodSchema: ZodTypeAny) =>
+//   (zodSchema: ZodSchema) =>
 //   async (req: Request, res: Response, next: NextFunction) => {
 //     try {
 //       let parsedBody;
 
+//       // 🔥 safe check (form-data support)
 //       if (req.body?.data) {
 //         parsedBody = JSON.parse(req.body.data);
 //       } else {
 //         parsedBody = req.body;
 //       }
 
-//       // 🔥 FULL request validate
-//       const validatedData = await zodSchema.parseAsync({
-//         body: parsedBody,
-//         params: req.params,
-//         query: req.query,
-//       }) as any;
+//       // ✅ validate with zod
+//       const validatedData = await zodSchema.parseAsync(parsedBody);
 
-//       // 🔥 overwrite safely
-//       req.body = validatedData.body;
-//       req.params = validatedData.params;
-//       req.query = validatedData.query;
+//       // override body with validated data
+//       req.body = validatedData;
 
 //       next();
 //     } catch (error) {
@@ -60,5 +26,33 @@ export const validateRequest =
 //     }
 //   };
 
+import { NextFunction, Request, Response } from "express";
+import { ZodSchema } from "zod";
 
+// ✅ define expected structure
+type RequestSchema = {
+  body?: any;
+  params?: any;
+  query?: any;
+};
 
+export const validateRequest =
+  <T extends RequestSchema>(schema: ZodSchema<T>) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const validatedData = await schema.parseAsync({
+        body: req.body,
+        params: req.params,
+        query: req.query,
+      });
+
+      // ✅ safe assign
+      if (validatedData.body) req.body = validatedData.body;
+      if (validatedData.params) req.params = validatedData.params;
+      if (validatedData.query) req.query = validatedData.query;
+
+      next();
+    } catch (error) {
+      next(error);
+    }
+  };
