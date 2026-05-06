@@ -135,7 +135,24 @@ const myTransactions = catchAsync(async (req:Request, res:Response, next:NextFun
       statusCode: 200,
       message:
         "Transactions fetched successfully",
-      data: result,
+      meta:result.meta,
+      data:result.data,
+    });
+
+})
+
+const getAllTransactions = catchAsync(async (req:Request, res:Response, next:NextFunction)=>{
+
+  const result = await transactionService.getAllTransactions()
+
+  
+    sentResponse(res, {
+      success: true,
+      statusCode: 200,
+      message:
+      "All transactions fetched successfully",
+      meta:result.meta,
+      data:result.data,
     });
 
 })
@@ -146,5 +163,6 @@ export const transactionController = {
    sendMoney,
    cashIn,
    cashOut,
-   myTransactions
+   myTransactions,
+   getAllTransactions
 }

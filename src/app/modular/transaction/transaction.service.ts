@@ -361,7 +361,34 @@ const myTransactions = async (
     .populate("toWallet")
     .sort({ createdAt: -1 });
 
-  return transactions;
+    const totalTransaction = await Transaction.countDocuments()
+
+  return{
+        data:transactions,
+        meta:{
+            total:totalTransaction
+        }
+    }
+};
+
+
+
+// admin all transactions
+const getAllTransactions = async () => {
+  const transactions = await Transaction.find()
+    .populate("initiatedBy")
+    .populate("fromWallet")
+    .populate("toWallet")
+    .sort({ createdAt: -1 });
+
+    const totaltTransactions = await Transaction.countDocuments()
+
+  return{
+    data:transactions,
+    meta:{
+      total:totaltTransactions
+    }
+  };
 };
 
 
@@ -374,5 +401,6 @@ export const transactionService = {
      sendMoney,
      cashIn,
      cashOut,
-     myTransactions
+     myTransactions,
+     getAllTransactions
 }

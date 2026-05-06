@@ -30,7 +30,11 @@ export const userSchema = new Schema<IUser>({
     },
     IsDeleted:{type:Boolean, default:false},
     IsVerified:{type:Boolean, default:false},
-    auths:[authProviderSchema]  
+    auths:[authProviderSchema],
+    isApproved: {
+   type: Boolean,
+   default: false
+}
 },{
     timestamps:true,
     versionKey:false

@@ -3,6 +3,7 @@ import { userRouter } from "../modular/user/user.route";
 import { authRouter } from "../modular/auth/auth.route";
 import { walletRouter } from "../modular/wallet/wallet.route";
 import { transactionRouter } from "../modular/transaction/transaction.route";
+import { adminRouter } from "../modular/admin/admin.route";
 
  export const router = Router()
 
@@ -22,7 +23,9 @@ import { transactionRouter } from "../modular/transaction/transaction.route";
     {
       path:"/transaction",
       route:transactionRouter
-    }
+    },
+   { path:"/admin",
+    route:adminRouter}
  ]
 
  moduleRouter.forEach((route)=>{

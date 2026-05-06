@@ -9,6 +9,7 @@ import { sentResponse } from "../../utils/sentResponse";
 import { authService } from "./auth.service";
 import { JwtPayload } from "jsonwebtoken";
 import { envVers } from "../../config/env";
+import { Role } from "../user/user.interface";
 
 
 
@@ -22,6 +23,10 @@ const credentialsLogin = catchAsync(async(req:Request, res:Response, next:NextFu
           if(!user){
             return next(new AppError (401, info.message))
           }
+
+          if(user.role === Role.AGENT && !user.isApproved){
+   throw new AppError(403,"Agent not approved")
+}
 
           const userTokens = await createUserToken(user)
 

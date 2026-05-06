@@ -29,4 +29,6 @@ router.get("/me",
 checkAuth(Role.USER, Role.AGENT),    
 transactionController.myTransactions)
 
+router.get("/all-transactions", checkAuth(Role.ADMIN), transactionController.getAllTransactions)
+
 export const  transactionRouter =router; 
