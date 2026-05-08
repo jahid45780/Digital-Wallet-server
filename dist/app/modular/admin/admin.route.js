@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.adminRouter = void 0;
+const express_1 = require("express");
+const authCheck_1 = require("../auth/authCheck");
+const user_interface_1 = require("../user/user.interface");
+const admin_controller_1 = require("./admin.controller");
+const router = (0, express_1.Router)();
+router.get("/all-user", (0, authCheck_1.checkAuth)(user_interface_1.Role.ADMIN), admin_controller_1.adminController.getAllUsers);
+router.get("/agents", (0, authCheck_1.checkAuth)(user_interface_1.Role.ADMIN), admin_controller_1.adminController.getAllAgents);
+router.patch("/approve-agent/:userId", (0, authCheck_1.checkAuth)(user_interface_1.Role.ADMIN), admin_controller_1.adminController.approveAgent);
+router.patch("/suspend-agent/:userId", (0, authCheck_1.checkAuth)(user_interface_1.Role.ADMIN), admin_controller_1.adminController.suspendAgent);
+exports.adminRouter = router;
