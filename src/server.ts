@@ -2,6 +2,7 @@ import { Server } from "http";
 import { envVers } from "./app/config/env";
 import mongoose from "mongoose";
 import app from "./app";
+import { connectRedis } from "./app/config/redis.config";
 
 let server: Server
 
@@ -20,4 +21,43 @@ const startServer = async()=>{
      }
 }
 
-startServer()
+
+  (async() =>{
+      await connectRedis()
+      await startServer()
+  })()
+
+
+process.on("SIGINT",()=>{
+     console.log("SIGINT detected ... server shutting down",);
+
+     if(server){
+        server.close(()=>{
+             process.exit(1)
+        })
+        process.exit(1)
+     }
+})
+
+process.on("unhandledRejection",(err)=>{
+     console.log("UnhandledRejection detected ... server shutting down", err);
+
+     if(server){
+        server.close(()=>{
+             process.exit(1)
+        })
+        process.exit(1)
+     }
+})
+
+
+process.on("uncaughtException",(err)=>{
+     console.log("UncaughtException detected ... server shutting down", err);
+
+     if(server){
+        server.close(()=>{
+             process.exit(1)
+        })
+        process.exit(1)
+     }
+})

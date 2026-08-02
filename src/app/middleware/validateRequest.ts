@@ -29,7 +29,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ZodSchema } from "zod";
 
-// ✅ define expected structure
+
 type RequestSchema = {
   body?: any;
   params?: any;
@@ -46,7 +46,7 @@ export const validateRequest =
         query: req.query,
       });
 
-      // ✅ safe assign
+    
       if (validatedData.body) req.body = validatedData.body;
       if (validatedData.params) req.params = validatedData.params;
       if (validatedData.query) req.query = validatedData.query;
