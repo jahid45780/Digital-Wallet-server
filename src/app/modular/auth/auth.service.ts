@@ -26,6 +26,7 @@ const resetPassword = async (payload:Record<string, any>, decodedToken:JwtPayloa
         throw new AppError(404,"user  not found")
     }
 
+
     const hashedPassword = await bcrypt.hash(
         payload.newPassword,
         Number(envVers.BCRYPT_SALT_ROUND)
