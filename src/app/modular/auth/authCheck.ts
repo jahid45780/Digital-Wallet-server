@@ -8,7 +8,8 @@ import { isActive } from "../user/user.interface";
 
 export const checkAuth = ((...authRoles:string[])=> async (req:Request, res:Response, next:NextFunction)=>{
      try {
-        const accessToken = req.headers.authorization;
+        const accessToken =  req.cookies.accessToken ||
+        req.headers.authorization?.replace("Bearer ", "");
 
         if(!accessToken){
             throw new AppError(401, "Not received token")

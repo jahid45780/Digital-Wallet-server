@@ -21,6 +21,13 @@ passport.use(
                 return done (null, false ,{message:"user does not exist"})
               }
 
+                  // VERIFY CHECK
+        if (!isUserExist.IsVerified) {
+          return done(null, false, {
+            message: "User is not verified",
+          });
+        }
+
               const isPasswordMatched = await bcrypt.compare(password as string, isUserExist.password as string)
 
               if(!isPasswordMatched){

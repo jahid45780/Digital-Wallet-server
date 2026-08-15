@@ -9,14 +9,14 @@ export const setAuthCookie = (res:Response, tokenInfo:authTokens)=>{
     if(tokenInfo.accessToken){
         res.cookie("accessToken", tokenInfo.accessToken,{
             httpOnly:true,
-            secure:true
+            secure:false
         })
     }
 
     if(tokenInfo.refreshToken){
         res.cookie("refreshToken",tokenInfo.refreshToken,{
             httpOnly:true,
-            secure:true
+            secure:false
         })
     }
 }
