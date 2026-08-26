@@ -23,12 +23,12 @@ router.post("/send-money",
     transactionController.sendMoney)
 
 router.post("/cash-in", 
-        checkAuth(Role.AGENT),
+        checkAuth(Role.AGENT, Role.ADMIN),
         validateRequest(cashInOutZodSchema),
         transactionController.cashIn)
 
  router.post("/cash-out", 
-    checkAuth(Role.AGENT),
+    checkAuth(Role.AGENT, Role.ADMIN),
     validateRequest(cashInOutZodSchema),
     transactionController.cashOut)
 

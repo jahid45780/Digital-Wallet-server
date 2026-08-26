@@ -11,7 +11,7 @@ const router = Router()
 
 router.get("/me", checkAuth(Role.USER,Role.AGENT), walletController.getMyWallet)
 
-router.post("/all-wallets", checkAuth(Role.ADMIN),
+router.get("/all-wallets", checkAuth(Role.ADMIN),
 walletController.getAllWallets)
 
 router.patch("/block/:walletId",
